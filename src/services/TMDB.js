@@ -10,9 +10,14 @@ export const tmdbApi = createApi({
   reducerPath: 'tmdbApi', // every createApi api call needs reducerPath
   baseQuery: fetchBaseQuery({ baseUrl: 'https://api.themoviedb.org/3' }),
   endpoints: (builder) => ({
+    // Get Genres
+    getGenres: builder.query({
+      query: () => `genre/movie/list?api_key=${tmdbApiKey}`,
+    }),
+
     // Get movies by [Type]
     getMovies: builder.query({
-      query: () => `movie/popular?page=${page}&api_key=${tmdbApiKey}`, // `` is template string
+      query: () => `movie/popular?page=${page}&api_key=${tmdbApiKey}`, // `` is template string which allows embedded expressions
     }),
   }), // A call back function that instantly returns an object, so wrap in parathesis
 });
@@ -21,5 +26,6 @@ export const tmdbApi = createApi({
 // because I put getMovies inside createApi, it auto created a hook and when it call it, it will
 // automatically gonna make a call to this api above
 export const {
+  useGetGenresQuery,
   useGetMoviesQuery, // must use preceisely this name
 } = tmdbApi;
