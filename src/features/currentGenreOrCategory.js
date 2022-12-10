@@ -12,15 +12,15 @@ import { createSlice } from '@reduxjs/toolkit';
 export const genreOrCategory = createSlice({
   name: 'genreOrCategory',
   initialState: {
-    genreOrCategoryName: '',
+    genreIdOrCategoryName: '',
     page: 1,
     searchQuery: '',
   },
   reducers: {
-    // created a function, export this function, then call it from component to populate genreOrCategoryName
+    // created a function, export this function, then call it from component to populate genreIdOrCategoryName
     selectGenreOrCategory: (state, action) => {
-      console.log(action.payload);
-      // state.genreOrCategoryName =
+      // console.log(action.payload);
+      state.genreIdOrCategoryName = action.payload;
     },
   },
 });

@@ -17,7 +17,20 @@ export const tmdbApi = createApi({
 
     // Get movies by [Type]
     getMovies: builder.query({
-      query: () => `movie/popular?page=${page}&api_key=${tmdbApiKey}`, // `` is template string which allows embedded expressions
+      query: ({ genreIdOrCategoryName, page }) => {
+        // Get Movies by Category
+        if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'string') {
+          return `movie/${genreIdOrCategoryName}?page=${page}&api_key=${tmdbApiKey}`;
+        }
+
+        // Get Movies by Genre (ids like 28, 10735, etc so === 'number')
+        if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'number') {
+          return `discover/movie?with_genres=${genreIdOrCategoryName}&page=${page}&api_key=${tmdbApiKey}`;
+        }
+
+        // Get Popular Movies (default)
+        return `movie/popular?page=${page}&api_key=${tmdbApiKey}`; // `` is template string which allows embedded expressions
+      },
     }),
   }), // A call back function that instantly returns an object, so wrap in parathesis
 });
