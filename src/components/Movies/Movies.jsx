@@ -8,8 +8,8 @@ import { MovieList } from '..';
 
 const Movies = () => {
   const [page, setPage] = useState(1);
-  const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory); // the slice we want
-  const { data, error, isFetching } = useGetMoviesQuery({ genreIdOrCategoryName, page });
+  const { genreIdOrCategoryName, searchQuery } = useSelector((state) => state.currentGenreOrCategory); // the slice we want (get data, then pass it into useGetMoviesQuery)
+  const { data, error, isFetching } = useGetMoviesQuery({ genreIdOrCategoryName, page, searchQuery });
 
   // useGetMoviesQuery automatically comes with a loading feature
   if (isFetching) {

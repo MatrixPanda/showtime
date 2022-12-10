@@ -19,12 +19,15 @@ export const genreOrCategory = createSlice({
   reducers: {
     // created a function, export this function, then call it from component to populate genreIdOrCategoryName
     selectGenreOrCategory: (state, action) => {
-      // console.log(action.payload);
       state.genreIdOrCategoryName = action.payload;
+      state.searchQuery = ''; // if we wanna search for category, the search query must be reset
+    },
+    searchMovie: (state, action) => {
+      state.searchQuery = action.payload;
     },
   },
 });
 
-export const { selectGenreOrCategory } = genreOrCategory.actions;
+export const { selectGenreOrCategory, searchMovie } = genreOrCategory.actions;
 
 export default genreOrCategory.reducer; // Remember, whenever there is a reducer, I must attach it to the store
