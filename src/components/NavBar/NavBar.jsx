@@ -11,7 +11,7 @@ import { fetchToken, createSessionId, moviesApi } from '../../utils';
 import useStyles from './styles';
 
 const NavBar = () => {
-  const { isAuthenticated, user } = useSelector(userSelector); // or useSelector((state) => state.auth)
+  const { isAuthenticated, user } = useSelector(userSelector); // or useSelector((state) => state.user)
   const [mobileOpen, setMobileOpen] = useState(false);
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:600px)');
