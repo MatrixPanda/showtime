@@ -36,6 +36,11 @@ export const tmdbApi = createApi({
         return `movie/popular?page=${page}&api_key=${tmdbApiKey}`; // `` is template string which allows embedded expressions
       },
     }),
+
+    // Get Movie
+    getMovie: builder.query({
+      query: (id) => `/movie/${id}?append_to_response=videos,credits&api_key=${tmdbApiKey}`, // url found on tmdb documentation
+    }),
   }), // A call back function that instantly returns an object, so wrap in parathesis
 });
 
@@ -45,4 +50,5 @@ export const tmdbApi = createApi({
 export const {
   useGetGenresQuery,
   useGetMoviesQuery, // must use preceisely this name
+  useGetMovieQuery,
 } = tmdbApi;
