@@ -6,18 +6,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
-import { useGetMovieQuery } from '../../services/TMDB';
+import { useGetMovieQuery, useGetRecommendationsQuery } from '../../services/TMDB';
 import useStyles from './styles';
 import genreIcons from '../../assets/genres';
+import { MovieList } from '..';
 
 // NOTE: run rafce for boiler plate shortcut (from ES7 extension)
 // Press alt and double click each word to change all at the same time
 const MovieInformation = () => {
   // console.log('Movie Information'); // To trick ESLint to not auto shorten the return below (cuz will add a lot later)
   const { id } = useParams(); // this line must be above others so the id is obtained first
-  const { data, isFetching, error } = useGetMovieQuery(id);
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const { data, isFetching, error } = useGetMovieQuery(id);
+  const { data: recommendations, isFetching: isRecommendationsFetching } = useGetRecommendationsQuery({ list: '/recommendations', movie_id: id });
 
   const isMovieFavorited = false;
   const isMovieWatchlisted = false;
@@ -135,6 +138,14 @@ const MovieInformation = () => {
           </div>
         </Grid>
       </Grid>
+      <Box marginTop="5rem" width="100%">
+        <Typography variant="h3" gutterBottom align="center">
+          You might also like
+        </Typography>
+        {recommendations
+          ? <MovieList movies={recommendations} numberOfMovies={12} />
+          : <Box>Sorry, nothing was found.</Box>}
+      </Box>
     </Grid>
   );
 };
