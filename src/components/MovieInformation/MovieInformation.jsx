@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Typography, Button, ButtonGroup, Grid, Box, CircularProgress, useMediaQuery, Rating } from '@mui/material';
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack } from '@mui/icons-material';
 import { Link, useParams } from 'react-router-dom';
@@ -6,32 +6,63 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
-import { useGetMovieQuery, useGetRecommendationsQuery } from '../../services/TMDB';
+import { useGetMovieQuery, useGetRecommendationsQuery, useGetListQuery } from '../../services/TMDB';
 import useStyles from './styles';
 import genreIcons from '../../assets/genres';
 import { MovieList } from '..';
+import { userSelector } from '../../features/auth';
 
 // NOTE: run rafce for boiler plate shortcut (from ES7 extension)
 // Press alt and double click each word to change all at the same time
 const MovieInformation = () => {
-  // console.log('Movie Information'); // To trick ESLint to not auto shorten the return below (cuz will add a lot later)
+  const { user } = useSelector(userSelector);
   const { id } = useParams(); // this line must be above others so the id is obtained first
   const classes = useStyles();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
   const { data, isFetching, error } = useGetMovieQuery(id);
+  const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: localStorage.getItem('session_id'), page: 1 });
+  const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: localStorage.getItem('session_id'), page: 1 });
   const { data: recommendations, isFetching: isRecommendationsFetching } = useGetRecommendationsQuery({ list: '/recommendations', movie_id: id });
 
-  const isMovieFavorited = false;
-  const isMovieWatchlisted = false;
+  const [isMovieFavorited, setIsMovieFavorited] = useState(false);
+  const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
 
+  // find out if we fav or watchlisted a movie before (so the next time we come, it needs to be saved there)
+  useEffect(() => {
+    // take our list of fav movies and see if the current movie the user is looking at is inside of that list (the data is from useGetMovieQuery(id))
+    // !! because the find just gives back the element if it exists but we want a boolean, therefore...
+    // {} by default is true, add ! makes it false, add again makes it true. And a '' by default is false
+    setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie?.id === data?.id));
+  }, [favoriteMovies, data]);
+
+  useEffect(() => {
+    setIsMovieWatchlisted(!!watchlistMovies?.results?.find((movie) => movie?.id === data?.id));
+  }, [watchlistMovies, data]);
+
+  // NOTE: not using redux query (which is only as hooks) here for api because we would have to use that created hook inside the function
+  // that wouldn't really work cuz we are not allowed to do that, and we don't want to do it on a global component level
+  // making api calls to our tmdb account. Either add to fav or add to watchlist
+  // to know which movie was added, refer to getList in services/TMDB.js
   const addToFavorites = async () => {
+    await axios.post(`https://api.themoviedb.org/3/account/${user.id}/favorite?api_key=${process.env.REACT_APP_TMDB_KEY}&session_id=${localStorage.getItem('session_id')}`, {
+      media_type: 'movie',
+      media_id: id, // endpoint says which account wants to fav a movie, and this line is which movie to fav for the account
+      favorite: !isMovieFavorited,
+    });
 
+    setIsMovieFavorited((prev) => !prev);
   };
 
   const addToWatchlist = async () => {
+    await axios.post(`https://api.themoviedb.org/3/account/${user.id}/watchlist?api_key=${process.env.REACT_APP_TMDB_KEY}&session_id=${localStorage.getItem('session_id')}`, {
+      media_type: 'movie',
+      media_id: id,
+      watchlist: !isMovieWatchlisted,
+    });
 
+    setIsMovieWatchlisted((prev) => !prev);
   };
 
   if (isFetching) {
