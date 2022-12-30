@@ -18,7 +18,7 @@ export default makeStyles((theme) => ({
   },
   image: {
     borderRadius: '20px',
-    height: '300px',
+    height: '270px',
     marginBottom: '10px',
     '&:hover': {
       transform: 'scale(1.05)',
@@ -27,7 +27,7 @@ export default makeStyles((theme) => ({
   title: {
     color: theme.palette.text.primary,
     textOverflow: 'ellipsis',
-    width: '230px',
+    width: '130px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     marginTop: '10px',

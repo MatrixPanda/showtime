@@ -14,6 +14,7 @@ const Search = () => {
   const location = useLocation();
 
   const handleKeyPress = (event) => {
+    // let keyword = query.replace(/[`~!@#$%^&*()_|+\s+-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
     if (event.key === 'Enter') {
       dispatch(searchMovie(query));
     }
